@@ -20,6 +20,7 @@ namespace StudentApiClient
             await GetAllStudents();
             Console.WriteLine("\n\n Passed students : ");
             await GetPassedStudents();
+            await GetAverageGrades();
         }
 
 
@@ -65,6 +66,22 @@ namespace StudentApiClient
             }
         }
 
+        static async Task GetAverageGrades()
+        {
+            try
+            {
+                Console.WriteLine("\n_____________________________");
+                Console.WriteLine("\nFetching average grade...\n");
+                var averageGrade = await httpClient.GetFromJsonAsync<float>("StudentsAPI/AverageGrades");
+                Console.WriteLine($"Average Grade: {averageGrade}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+
+
+        }
 
 
     }
