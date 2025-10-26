@@ -18,7 +18,30 @@ namespace StudentApiClient
             httpClient.BaseAddress = new Uri("https://localhost:7207/api/StudentsAPI"); // Set this to the correct URI for your API
 
             await GetAllStudents();
+            Console.WriteLine("\n\n Passed students : ");
+            await GetPassedStudents();
+        }
 
+
+        static async Task GetPassedStudents()
+        {
+            try
+            {
+                Console.WriteLine("\n_____________________________");
+                Console.WriteLine("\nFetching passed students...\n");
+                var students = await httpClient.GetFromJsonAsync<List<Student>>("StudentsAPI/Passed");
+                if (students != null)
+                {
+                    foreach (var student in students)
+                    {
+                        Console.WriteLine($"ID: {student.Id}, Name: {student.Name}, Age: {student.Age}, Age: {student.Grade}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
         }
 
         static async Task GetAllStudents()
@@ -27,7 +50,7 @@ namespace StudentApiClient
             {
                 Console.WriteLine("\n_____________________________");
                 Console.WriteLine("\nFetching all students...\n");
-                var students = await httpClient.GetFromJsonAsync<List<Student>>("StudentsAPI/Passed");
+                var students = await httpClient.GetFromJsonAsync<List<Student>>("StudentsAPI/All");
                 if (students != null)
                 {
                     foreach (var student in students)
