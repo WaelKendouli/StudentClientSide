@@ -17,10 +17,11 @@ namespace StudentApiClient
         {
             httpClient.BaseAddress = new Uri("https://localhost:7207/api/StudentsAPI"); // Set this to the correct URI for your API
 
-            await GetAllStudents();
-            Console.WriteLine("\n\n Passed students : ");
-            await GetPassedStudents();
-            await GetAverageGrades();
+            //await GetAllStudents();
+            //Console.WriteLine("\n\n Passed students : ");
+            //await GetPassedStudents();
+            //await GetAverageGrades();
+            await GetStudentByID();
         }
 
 
@@ -82,9 +83,46 @@ namespace StudentApiClient
 
 
         }
+        
+        static async Task GetStudentByID()
+        {
+            Console.WriteLine("Student ID : ");
+            int id;
+            id = Convert.ToInt32(Console.ReadLine());
 
+            try
+            {
+                Console.WriteLine("\n_____________________________");
+                Console.WriteLine($"\nFetching student with ID {id}...\n");
+
+                var response = await httpClient.GetAsync($"StudentsAPI/{id}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var student = await response.Content.ReadFromJsonAsync<Student>();
+                    if (student != null)
+                    {
+                        Console.WriteLine($"ID: {student.Id}, Name: {student.Name}, Age: {student.Age}, Grade: {student.Grade}");
+                    }
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+                    Console.WriteLine($"Bad Request: Not accepted ID {id}");
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    Console.WriteLine($"Not Found: Student with ID {id} not found.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
 
     }
+
+    
 
     public class Student
     {
