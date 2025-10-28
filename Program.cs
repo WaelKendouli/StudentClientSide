@@ -19,12 +19,13 @@ namespace StudentApiClient
         {
             httpClient.BaseAddress = new Uri("https://localhost:7207/api/StudentsAPI"); // Set this to the correct URI for your API
 
-            await AddNewStudent(ReadStudentInfo());
-            //await GetAllStudents();
+            await DeleteStudent(18);
+            //await AddNewStudent(ReadStudentInfo());
+            await GetAllStudents();
             //Console.WriteLine("\n\n Passed students : ");
             //await GetPassedStudents();
             //await GetAverageGrades();
-            await GetStudentByID();
+            //await GetStudentByID();
         }
 
 
@@ -158,6 +159,33 @@ namespace StudentApiClient
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+        }
+
+        static async Task DeleteStudent(int id)
+        {
+            try
+            {
+                Console.WriteLine("\n_____________________________");
+                Console.WriteLine($"\nDeleting student with ID {id}...\n");
+                var response = await httpClient.DeleteAsync($"StudentsAPI/{id}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Student with ID {id} has been deleted.");
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+                    Console.WriteLine($"Bad Request: Not accepted ID {id}");
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    Console.WriteLine($"Not Found: Student with ID {id} not found.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
             }
         }
 
