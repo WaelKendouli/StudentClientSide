@@ -5,6 +5,8 @@ using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
+using System.ComponentModel.Design;
 //using Newtonsoft.Json;
 
 namespace StudentApiClient
@@ -17,6 +19,7 @@ namespace StudentApiClient
         {
             httpClient.BaseAddress = new Uri("https://localhost:7207/api/StudentsAPI"); // Set this to the correct URI for your API
 
+            await AddNewStudent(ReadStudentInfo());
             //await GetAllStudents();
             //Console.WriteLine("\n\n Passed students : ");
             //await GetPassedStudents();
@@ -120,6 +123,44 @@ namespace StudentApiClient
             }
         }
 
+        public static Student ReadStudentInfo()
+        {
+            Student s = new Student();
+            Console.WriteLine("ID :");
+            s.Id = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Name :");
+            s.Name = Console.ReadLine();
+            Console.WriteLine("Age :");
+            s.Age = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Grade :");
+            s.Grade = Convert.ToInt32(Console.ReadLine());
+
+            return s;
+        }
+        static async Task AddNewStudent(Student NewStudent)
+        {
+            try
+            {
+                Console.WriteLine("_________________________________");
+                Console.WriteLine("Add New Student ...");
+                var response = await httpClient.PostAsJsonAsync("" , NewStudent);
+                if (response.IsSuccessStatusCode)
+                {
+                    var addedStudent = await response.Content.ReadFromJsonAsync<Student>();
+                    Console.WriteLine($"Added Student - ID: {addedStudent.Id}, Name: {addedStudent.Name}, Age: {addedStudent.Age}, Grade: {addedStudent.Grade}");
+
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) 
+                {
+                    Console.WriteLine("Bad request , invalid inputs");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
     }
 
     
@@ -130,5 +171,7 @@ namespace StudentApiClient
         public string Name { get; set; }
         public int Age { get; set; }
         public int Grade { get; set; }
+
+
     }
 }
