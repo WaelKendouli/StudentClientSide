@@ -19,13 +19,14 @@ namespace StudentApiClient
         {
             httpClient.BaseAddress = new Uri("https://localhost:7207/api/StudentsAPI"); // Set this to the correct URI for your API
 
-            await DeleteStudent(18);
-            //await AddNewStudent(ReadStudentInfo());
-            await GetAllStudents();
+            //await DeleteStudent(18);
+            ////await AddNewStudent(ReadStudentInfo());
+            //await GetAllStudents();
             //Console.WriteLine("\n\n Passed students : ");
             //await GetPassedStudents();
             //await GetAverageGrades();
             //await GetStudentByID();
+            await UpdateStudent(35, new Student { Id = 7, Age = 16, Grade = 50, Name = "Salwa" });
         }
 
 
@@ -181,6 +182,33 @@ namespace StudentApiClient
                 else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
                     Console.WriteLine($"Not Found: Student with ID {id} not found.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
+        static async Task UpdateStudent(int id, Student updatedStudent)
+        {
+            try
+            {
+                Console.WriteLine("\n_____________________________");
+                Console.WriteLine($"\nUpdating student with ID {id}...\n");
+                var response = await httpClient.PutAsJsonAsync($"StudentsAPI/{id}", updatedStudent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var student = await response.Content.ReadFromJsonAsync<Student>();
+                    Console.WriteLine($"Updated Student: ID: {student.Id}, Name: {student.Name}, Age: {student.Age}, Grade: {student.Grade}");
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+                    Console.WriteLine("Failed to update student: Invalid data.");
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    Console.WriteLine($"Student with ID {id} not found.");
                 }
             }
             catch (Exception ex)
